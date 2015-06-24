@@ -374,11 +374,11 @@ handleScripts() {
 	script=`fst $tuple`
 	xs=`snd $tuple`
 
-	if [ $debugging = 1 ] && echo $script
+	[ $debugging = 1 ] && echo $script
 
 	if [ `isScriptValid $script` = 0 ]; then
-		if [ $debugging = 1 ] && echo "The script \`$script' contains an error and is thus invalid."
-		if [ $debugging = 1 ] && echo "error message : `isScriptValid $script 1`"
+		[ $debugging = 1 ] && echo "The script \`$script' contains an error and is thus invalid."
+		[ $debugging = 1 ] && echo "error message : `isScriptValid $script 1`"
 		handleScripts $xs
 		return
 	fi
@@ -390,16 +390,16 @@ handleScripts() {
 		timeout="0"
 	fi
 
-	if [ $debugging = 1 ] && echo "Checking \`$script' script for \`$eventName'"
+	[ $debugging = 1 ] && echo "Checking \`$script' script for \`$eventName'"
 
 	# if $timeout = -1 we never run that event again
-	if [ $timeout = 0 ] || [ $((`cmpDateTime now $timeout` <= 1)) = 1 ]; then
+	if [ $timeout = 0 ] || [ $((`cmpDateTime "$(now)" "$timeout"` <= 1)) = 1 ]; then
 		if [ `runSFunc "$script" "eventIsTrue"` = 1 ]; then
 			handleTriggerEvent $script
 		else
-			if [ $debugging = 1 ] && [ $timeout != 0 ] && echo "\`cmpDateTime '`now` '$timeout' '\` == `cmpDateTime now $timeout`"
-			if [ $debugging = 1 ] && echo "Trigger is off"
-			if [ -e $varDir/_${eventName}-timeout ] && rm $varDir/_${eventName}-timeout
+			[ $debugging = 1 ] && [ $timeout != 0 ] && echo "\`cmpDateTime '`now`' '$timeout' '\` == `cmpDateTime \"$(now)\" \"$timeout\"`"
+			[ $debugging = 1 ] && echo "Trigger is off"
+			[ -e $varDir/_${eventName}-timeout ] && rm $varDir/_${eventName}-timeout
 		fi
 	fi
 
