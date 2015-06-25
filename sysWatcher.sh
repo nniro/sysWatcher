@@ -359,6 +359,16 @@ EOF
 		;;
 
 		email)
+			triggerEventEmailContent="`runSFunc \"$script\" \"triggerEventEmailContent\"`"
+			hostname=`hostname`
+
+			if [ "$triggerEventEmailContent" != "" ]; then
+				emailContent="$hostname `now` - This is the content of the event :\n\n$triggerEventEmailContent"
+			else
+				emailContent="$hostname `now` - There were no specific content released for this event."
+			fi
+
+			echo "$emailContent" | mail -s "$hostname: sysWatcher \`$eventName' event triggered" $email
 		;;
 	esac
 
