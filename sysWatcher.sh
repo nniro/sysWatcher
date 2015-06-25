@@ -345,7 +345,7 @@ handleTriggerEvent() {
 	eventName="`runSFunc \"$script\" \"eventName\"`"
 	timeout="`runSFunc \"$script\" \"triggerTimeout\"`"
 
-	if [ $timeout != 0 ]; then
+	if [ "$timeout" != "0" ]; then
 		cat > $varDir/_${eventName}-timeout << EOF
 $timeout
 EOF
@@ -393,7 +393,7 @@ handleScripts() {
 	[ $debugging = 1 ] && echo "Checking \`$script' script for \`$eventName'"
 
 	# if $timeout = -1 we never run that event again
-	if [ $timeout = 0 ] || [ $((`cmpDateTime "$(now)" "$timeout"` <= 1)) = 1 ]; then
+	if [ "$timeout" = "0" ] || [ $((`cmpDateTime "$(now)" "$timeout"` <= 1)) = 1 ]; then
 		if [ `runSFunc "$script" "eventIsTrue"` = 1 ]; then
 			handleTriggerEvent $script
 		else
