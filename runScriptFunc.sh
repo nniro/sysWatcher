@@ -12,6 +12,10 @@ fi
 
 . $script
 
-echo `$function`
-
-exit 0;
+# we first check if the actual function exists
+if [ "`declare -f | grep $function`" != "" ]; then
+	echo `$function`
+	exit 0
+else
+	exit 1
+fi

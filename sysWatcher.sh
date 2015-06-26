@@ -64,234 +64,23 @@ fi
 
 . $mainConfig
 
+. ./utils.sh
+
 #scripts=`ls -B $eventDir/*`
 # only normal files, no files starting with . and no files containing the symbol ~
-scripts=`find $eventDir -maxdepth 1 -type f -regex '[^\/]*\/[^\.][^~]*'`
-
-function mkTuple() {
-	# using '@' characters to support the content even if they contain commas inside of them
-	# now if the content contains '@', we are screwed so we encode both '@' characters and ','
-	# characters.
-	first=`echo $1 | sed -e 's/\@/%40/g; s/,/%2c/g'`
-	second=`echo $2 | sed -e 's/\@/%40/g; s/,/%2c/g'`
-	echo "(@$first@,@$second@)"
-}
-
-function isTuple() {
-	if [[ "`echo \"$1\" | sed -e 's/^(\@[^\@]*\@,\@[^\@]*\@)$//'`" == "" ]]; then
-		echo 1
-	else
-		echo 0
-	fi
-}
-
-# output the first element of a tuple
-function fst() {
-	if [[ `isTuple "$1"` == 0 ]]; then
-		echo "Input is not a tuple"
-		exit 1
-	fi
-	echo "$1" | sed -e 's/(\@\(.*\)\@,\@.*\@)/\1/' | sed -e 's/%40/\@/g; s/%2c/,/g'
-}
-
-# output the second element of a tuple
-function snd() {
-	if [[ `isTuple "$1"` == 0 ]]; then
-		echo "Input is not a tuple"
-		exit 1
-	fi
-	echo "$1" | sed -e 's/(\@[^\@]*\@,\@\([^\@]*\)\@)/\1/' | sed -e 's/%40/\@/g; s/%2c/,/g'
-}
-
-function sep() {
-	if [[ "$2" == "" ]]; then
-		local sepChr=" "
-		local data="$1"
-	else
-		local sepChr="$1"
-		local data="$2"
-	fi
-	#mkTuple `echo "$data" | sed -e "s/^\([^$sepChr]*\)$sepChr\(.*\)$/\"\1\" \"\2\"/"`
-	#echo "$data" | sed -e "s/^\([^$sepChr]*\)$sepChr\(.*\)$/\"\1\" \"\2\"/"
-	mkTuple "`echo \"$data\" | sed -e \"s/^\([^$sepChr]*\)\($sepChr\)\(.*\)$/\1/\"`" "`echo \"$data\" | sed -ne \"s/^\([^$sepChr]*\)$sepChr\(.*\)$/\2/ p\"`"
-}
-
-testDateTime="2015-01-05 22:32:11"
-
-
-getYear() {
-	input=$1
-	case $input in
-		-1)
-			return -1
-		;;
-		0)
-			return 0
-		;;
-
-		*)
-			printf $input | sed -e 's/\([0-9]\{4\}\)-[0-9]\{2\}-[0-9]\{2\} [0-9]\{2\}:[0-9]\{2\}:[0-9]\{2\}/\1/'
-		;;
-	esac
-}
-
-getMonth() {
-	input=$1
-	case $input in
-		-1)
-			return -1
-		;;
-		0)
-			return 0
-		;;
-
-		*)
-			printf $input | sed -e 's/[0-9]\{4\}-\([0-9]\{2\}\)-[0-9]\{2\} [0-9]\{2\}:[0-9]\{2\}:[0-9]\{2\}/\1/'
-		;;
-	esac
-}
-
-getDay() {
-	input=$1
-	case $input in
-		-1)
-			return -1
-		;;
-		0)
-			return 0
-		;;
-
-		*)
-			printf $input | sed -e 's/[0-9]\{4\}-[0-9]\{2\}-\([0-9]\{2\}\) [0-9]\{2\}:[0-9]\{2\}:[0-9]\{2\}/\1/'
-		;;
-	esac
-}
-
-getTime() {
-	input=$1
-	case $input in
-		-1)
-			return -1
-		;;
-		0)
-			return 0
-		;;
-
-		*)
-			printf $input | sed -e 's/[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\} \([0-9]\{2\}:[0-9]\{2\}:[0-9]\{2\}\)/\1/'
-		;;
-	esac
-}
-
-#getDay $testDateTime
-#getTime $testDateTime
-
-# compare 2 special format digits
-# arguments : <separation symbol> <first digit (string)> <second digit (string)>
-# result: 
-# 0 : equal
-# 1 : first time higher
-# 2 : first time lower
-cmpDigits() {
-	sepSymbol=$1
-	time1=$2
-	time2=$3
-
-	tuple1=`mkTuple "" $time1`
-	tuple2=`mkTuple "" $time2`
-
-	while [ 1 != 2 ]; do
-
-		if [ "`snd $tuple1`" = "" ] || [ "`snd $tuple2`" = "" ]; then
-			break
-		fi
-
-		tuple1=`sep "$sepSymbol" \`snd $tuple1\``
-		tuple2=`sep "$sepSymbol" \`snd $tuple2\``
-
-		val1=`fst $tuple1`
-		val2=`fst $tuple2`
-
-		if [ $val1 = $val2 ]; then
-			continue
-		else
-			if [ $(($val1 > $val2)) = 1 ]; then
-				echo 1
-				return
-			else
-				echo 2
-				return
-			fi
-		fi
-	done
-
-	echo 0
-	return
-}
-
-# compare 2 dates
-# result: 
-# 0 : equal
-# 1 : first time higher
-# 2 : first time lower
-cmpDate() {
-	echo `cmpDigits '-' $1 $2`
-}
-
-# compare 2 times
-# result: 
-# 0 : equal
-# 1 : first time higher
-# 2 : first time lower
-cmpTime() {
-	echo `cmpDigits ':' $1 $2`
-}
-
-# compare 2 dateTimes
-# result: 
-# 0 : equal
-# 1 : first time higher
-# 2 : first time lower
-cmpDateTime() {
-	dateTime1=$1
-	dateTime2=$2
-
-	tuple1=`sep " " $dateTime1`
-	tuple2=`sep " " $dateTime2`
-
-	date1=`fst $tuple1`
-	date2=`fst $tuple2`
-
-	time1=`snd $tuple1`
-	time2=`snd $tuple2`
-
-	result=`cmpDate $date1 $date2`
-
-	if [ $result = 0 ]; then
-		echo `cmpTime $time1 $time2`
-	else
-		echo $result
-	fi
-}
-
-now() {
-	date +'%F %T'
-}
-
-#echo `cmpTime "22:32:22" "22:32:23"`
-#echo `cmpDateTime "2015-01-01 22:32:22" "2015-01-01 22:32:21"`
-
-#exit 0
+scripts=`find -L $eventDir -maxdepth 1 -type f -regex '[^\/]*\/[^\.][^~]*'`
 
 # run Script's function
 runSFunc() {
 	script=$1
 	function=$2
 
-	result=`/bin/sh runScriptFunc.sh $script $function`
+	# It seems that the 'declare' bultin can not be used when called from the generic
+	# /bin/sh shell. So we call this script with the current SHELL.
+	result=`$SHELL runScriptFunc.sh $script $function`
 
 	if [ $? = 1 ]; then
-		echo "An error happened when running a script"
+		[ $debugging = 1 ] && echo "An error happened when running a script" || echo ""
 	else
 		echo $result
 	fi
@@ -375,12 +164,11 @@ EOF
 }
 
 handleScripts() {
-
 	if [ "$1" = "" ]; then
 		return
 	fi
 
-	tuple=`sep $1`
+	tuple=`sep "$1"`
 	script=`fst $tuple`
 	xs=`snd $tuple`
 
@@ -416,7 +204,10 @@ handleScripts() {
 	handleScripts $xs
 }
 
+#echo $((`cmpDateTime "$(now)" "2015-06-24 02:50:00"` <= 1))
+#exit 0
+
 while [ 1 = 1 ]; do
-	handleScripts $scripts
+	handleScripts "$scripts"
 	sleep 5
 done
