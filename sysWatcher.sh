@@ -51,8 +51,12 @@ if [ "$mainConfig" = "" ]; then
 		if [ -e "/etc/$defaultConfigName" ]; then
 			mainConfig="/etc/$defaultConfigName"
 		else
-			echo "Error: no configuration found."
-			exit 1
+			if [ -e "/usr/local/etc/$defaultConfigName"]; then
+				mainConfig="/usr/local/etc/$defaultConfigName"
+			else
+				echo "Error: no configuration found."
+				exit 1
+			fi
 		fi
 	fi
 fi
@@ -64,7 +68,20 @@ fi
 
 . $mainConfig
 
-. ./utils.sh
+if [ -d /usr/share/sysWatcher ]; then
+	sharedDir="/usr/share/sysWatcher"
+else
+	if [ -d /usr/local/share/sysWatcher ]; then
+		sharedDir="/usr/local/share/sysWatcher"
+	else
+		echo "Could not find the shared script directory."
+		echo "Please install them first to use this script."
+		echo "(These contain scripts that are also useful for the plugins.)"
+		exit 1
+	fi
+fi
+
+. $sharedDir/utils.sh
 
 #scripts=`ls -B $eventDir/*`
 # only normal files, no files starting with . and no files containing the symbol ~
@@ -143,8 +160,9 @@ EOF
 	case "`runSFunc \"$script\" \"triggerEventType\"`" in
 		script)
 			triggerScript="`runSFunc \"$script\" \"triggerEventScript\"`"
+			triggerEventScriptContent="`runSFunc \"$script\" \"triggerEventScriptContent\"`"
 
-			/bin/sh $triggerScript
+			/bin/sh $triggerScript "$triggerEventScriptContent"
 		;;
 
 		email)
@@ -191,7 +209,16 @@ handleScripts() {
 	[ $debugging = 1 ] && echo "Checking \`$script' script for \`$eventName'"
 
 	# if $timeout = -1 we never run that event again
-	if [ "$timeout" = "0" ] || [ $((`cmpDateTime "$(now)" "$timeout"` <= 1)) = 1 ]; then
+	[ "$timeout" = "0" ] && checkTimeout=`echo 0` || checkTimeout=`cmpDateTime "$(now)" "$timeout"`
+
+	if [ "$checkTimeout" = "-1" ]; then
+		echo "An error was detected with the timeout for the script \`$script'"
+		echo "either '$timeout' is wrong or '`now`'"
+		handleScripts $xs
+		return
+	fi
+
+	if [ "$timeout" = "0" ] || [ $(( $checkTimeout <= 1)) = 1 ]; then
 		if [ `runSFunc "$script" "eventIsTrue"` = 1 ]; then
 			handleTriggerEvent $script
 		else
@@ -204,10 +231,14 @@ handleScripts() {
 	handleScripts $xs
 }
 
+#echo `cmpDateTime "houba" "zim"`
+#exit 0
+
 #echo $((`cmpDateTime "$(now)" "2015-06-24 02:50:00"` <= 1))
 #exit 0
 
-while [ 1 = 1 ]; do
+# uncomment the next lines to make this script standalone
+#while [ 1 = 1 ]; do
 	handleScripts "$scripts"
-	sleep 5
-done
+#	sleep 5
+#done

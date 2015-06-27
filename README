@@ -1,0 +1,26 @@
+System watcher project. Made as a generic event system, this project, fully
+scriptable, permit to use custom triggers to either call a specific script or
+send an email with specific content. The triggering events is totally the
+responsibility of the plugin scripts, hence the coined term "generic" for the
+project. sysWatcher.sh looks for sysWatcher.conf either in /etc or in the
+directory where the script is currently. This configuration file needs to
+contain at least 3 variables : email, eventDir and varDir. These 3 values are
+mandatory since eventDir is the place where the script looks for the plugin
+scripts, varDir contains among other, the timeout temporary files and email is
+the default email which is used. The plugin scripts need to contain a certain
+amount of mandatory functions to be fully functionnal. Details are fully laid
+out (also for the sysWatcher.conf file) inside sysWatcher.sh.
+
+The installation process is necessary due to dependency on in-house scripts
+which provide functions useful for plugins and the main script alike.
+Functions facilitating date and time malipulation are provided, among others.
+
+Due to compatibility reasons, only bash and zsh are supported, dash does not
+have enough features to work correctly. To a certain extent (though not
+tested) ksh could also work.
+
+It is necessary to put sysWatcher.sh in a cron job (or similar), this will
+make sysWatcher run as often or as little as necessary for your need.
+
+It would be quite trivial to run sysWatcher as a standalone daemon, but that
+would probably be less useful than in a cron job.

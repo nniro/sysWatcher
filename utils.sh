@@ -343,6 +343,7 @@ addHours() {
 # compare 2 special format digits
 # arguments : <separation symbol> <first digit (string)> <second digit (string)>
 # result: 
+# -1 : error
 # 0 : equal
 # 1 : first time higher
 # 2 : first time lower
@@ -363,8 +364,8 @@ cmpDigits() {
 		tuple1=`sep "$sepSymbol" \`snd $tuple1\``
 		tuple2=`sep "$sepSymbol" \`snd $tuple2\``
 
-		val1=`fst $tuple1`
-		val2=`fst $tuple2`
+		val1=`fst $tuple1 | sed -e 's/0\([0-9]\)/\1/'`
+		val2=`fst $tuple2 | sed -e 's/0\([0-9]\)/\1/'`
 
 		if [ $val1 = $val2 ]; then
 			continue
@@ -385,12 +386,13 @@ cmpDigits() {
 
 # compare 2 dates
 # result: 
+# -1 : error
 # 0 : equal
 # 1 : first time higher
 # 2 : first time lower
 cmpDate() {
 	if [ "`isValidDate \"$1\"`" = "0" ] || [ "`isValidDate \"$2\"`" = "0" ]; then
-		echo "0"
+		echo -1
 		return
 	fi
 	echo `cmpDigits '-' "$1" "$2"`
@@ -398,12 +400,13 @@ cmpDate() {
 
 # compare 2 times
 # result: 
+# -1 : error
 # 0 : equal
 # 1 : first time higher
 # 2 : first time lower
 cmpTime() {
 	if [ "`isValidTime \"$1\"`" = "0" ] || [ "`isValidTime \"$2\"`" = "0" ]; then
-		echo "0"
+		echo -1
 		return
 	fi
 	echo `cmpDigits ':' "$1" "$2"`
@@ -411,6 +414,7 @@ cmpTime() {
 
 # compare 2 dateTimes
 # result: 
+# -1 : error
 # 0 : equal
 # 1 : first time higher
 # 2 : first time lower
