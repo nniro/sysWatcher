@@ -94,7 +94,7 @@ runSFunc() {
 
 	# It seems that the 'declare' bultin can not be used when called from the generic
 	# /bin/sh shell. So we call this script with the current SHELL.
-	result=`$SHELL runScriptFunc.sh $script $function`
+	result=`/bin/sh $sharedDir/runScriptFunc.sh $script $function`
 
 	if [ $? = 1 ]; then
 		[ $debugging = 1 ] && echo "An error happened when running a script" || echo ""
