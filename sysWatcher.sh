@@ -71,14 +71,10 @@ fi
 if [ -d /usr/share/sysWatcher ]; then
 	sharedDir="/usr/share/sysWatcher"
 else
-	if [ -d /usr/local/share/sysWatcher ]; then
-		sharedDir="/usr/local/share/sysWatcher"
-	else
-		echo "Could not find the shared script directory."
-		echo "Please install them first to use this script."
-		echo "(These contain scripts that are also useful for the plugins.)"
-		exit 1
-	fi
+	echo "Could not find the shared script directory."
+	echo "Please install them first to use this script."
+	echo "(These contain scripts that are also useful for the plugins.)"
+	exit 1
 fi
 
 . $sharedDir/utils.sh
