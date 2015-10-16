@@ -61,7 +61,7 @@ if [ "$mainConfig" = "" ]; then
 	fi
 fi
 
-if [ ! -r $mainConfig ]; then
+if [ ! -r "$mainConfig" ]; then
 	echo "Error: Configuration file \`$mainConfig' does not exist or is not readable."
 	exit 1
 fi
