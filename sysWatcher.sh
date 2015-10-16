@@ -68,6 +68,27 @@ fi
 
 . $mainConfig
 
+# we check the validity of what is set inside the configuration
+if [ ! -d $eventDir ]; then
+	echo "the events Directory '$eventDir\` does not exist, please input a valid directory in the configuration file."
+	exit 1
+else
+	if [ ! -w $eventDir ] || [ ! -r $eventDir ] || [ ! -x $eventDir ]; then
+		echo "the events Directory '$eventDir\` is not writable, readable or executable, please fix the permissions of the directory."
+		exit 1
+	fi
+fi
+
+if [ ! -d $varDir ]; then
+	echo "the variable Directory '$varDir\` does not exist, please input a valid directory in the configuration file."
+	exit 1
+else
+	if [ ! -w $varDir ] || [ ! -r $varDir ]; then
+		echo "the variable Directory '$varDir\` is not writable or readable, please fix the permissions of the directory."
+		exit 1
+	fi
+fi
+
 if [ -d /usr/share/sysWatcher ]; then
 	sharedDir="/usr/share/sysWatcher"
 else
