@@ -6,7 +6,16 @@ debugging=0
 
 . /usr/share/sysWatcher/utils.sh
 
-exampleGoodRaid="\
+
+exampleRaid1="\
+Personalities : [raid1]\n\
+md2 : active raid1 sda1[1](F) sdb1[2]\n\
+      40112000 blocks super 1.2 [2/2] [U_]\n\
+      \n\
+unused devices: <none>\
+"
+
+exampleRaid2="\
 Personalities : [raid1]\n\
 md127 : active raid1 dm-2[0] dm-1[2]\n\
       40112000 blocks super 1.2 [2/2] [UU]\n\
@@ -19,6 +28,31 @@ md5 : active raid5 sdg1[4](F) sdf1[3] sde1[2](F) sdd1[1] sdc1[0]
       \n\
 unused devices: <none>\
 "
+
+exampleRaid3="\
+Personalities : [raid1]\n\
+md2 : active raid1 sda1[1](F) sdb1[2]\n\
+      40112000 blocks super 1.2 [2/2] [UU]\n\
+      \n\
+unused devices: <none>\
+"
+
+exampleRaid4="\
+Personalities : [raid1]\n\
+md2 : active raid1 sda1[1] sdb1[2]\n\
+      40112000 blocks super 1.2 [2/2] [_U]\n\
+      \n\
+unused devices: <none>\
+"
+
+exampleRaid5="\
+Personalities : [raid1]\n\
+md2 : active raid1 sda1[1] sdb1[2]\n\
+      40112000 blocks super 1.2 [2/2] [UU]\n\
+      \n\
+unused devices: <none>\
+"
+
 
 # output error status or no output at all when everything is fine
 interpretRaidLine() {
@@ -95,8 +129,8 @@ interpretRaidLine() {
 
 getRaidErrors() {
 	currentRaid=`cat /proc/mdstat`
-	#toCheckOutput=$currentRaid
-	toCheckOutput=$exampleGoodRaid
+	toCheckOutput=$currentRaid
+	#toCheckOutput=$exampleRaid5
 	# this version does not add the second line
 	#result=`printf $exampleGoodRaid | sed -n -e "s/\(md[0-9]*\) : [^ ]* [^ ]* \(.*\)/\1 \2/; t zim" -e "b ; :zim {p}"`
 	# this version adds stuff from the second line
