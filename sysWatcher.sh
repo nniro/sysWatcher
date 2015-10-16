@@ -96,6 +96,10 @@ while [[ 1 -eq 1 ]]; do
 			if [ `argumentType $1` = 1 ]; then shift 1; fi
 		;;
 
+		-s|--standalone)
+			standalone=1
+		;;
+
 		-*|--*)
 			echo "Invalid argument '$1\` used, bailing out"
 			exit 1
@@ -322,8 +326,12 @@ handleScripts() {
 #echo $((`cmpDateTime "$(now)" "2015-06-24 02:50:00"` <= 1))
 #exit 0
 
-# uncomment the next lines to make this script standalone
-#while [ 1 = 1 ]; do
+if [ "$standalone" = "1" ]; then
+	while [ 1 = 1 ]; do
+		handleScripts "$scripts"
+		sleep 5
+	done
+else
 	handleScripts "$scripts"
-#	sleep 5
-#done
+fi
+
