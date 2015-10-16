@@ -41,7 +41,75 @@ defaultConfigName="sysWatcher.conf"
 
 debugging=1
 
-mainConfig=$1
+# argument type
+# 0 is error
+# 1 is -N
+# 2 is --N
+function argumentType() {
+
+	result1="`echo $1 | sed -n -e '/^-[^-]/ p'`"
+	result2="`echo $1 | sed -n -e '/^--/ p'`"
+
+	if [ "$result1" != "" ]; then
+		echo -n 1
+		return
+	fi
+
+	if [ "$result2" != "" ]; then
+		echo -n 2
+		return
+	fi
+
+	echo -n 0
+}
+
+function parseArgument() {
+	first=$1
+	second=$2
+
+	case "`argumentType $first`" in
+		1)
+			#the second argument contains the data
+			echo -n $second
+			return
+		;;
+
+		2)
+			#the data is after the '=' symbol
+			echo -n $first | sed -e 's/[^\=]*\=\(.*\)/\1/'
+			return
+		;;
+	esac
+	echo -n ""
+}
+
+while [[ 1 -eq 1 ]]; do
+
+	if [ "$1" = "" ]; then
+		# no more arguments to parse
+		break
+	fi
+
+	case "$1" in
+		-c|--config=*)
+			mainConfig=`parseArgument $1 $2`
+			if [ `argumentType $1` = 1 ]; then shift 1; fi
+		;;
+
+		-*|--*)
+			echo "Invalid argument '$1\` used, bailing out"
+			exit 1
+		;;
+
+		*)
+			echo "Invalid data entered, bailing out"
+			exit 1
+		;;
+	esac
+
+	shift 1
+done
+
 
 if [ "$mainConfig" = "" ]; then
 	# we'll check in the default places for the main config
