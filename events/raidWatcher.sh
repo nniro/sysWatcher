@@ -135,7 +135,15 @@ getRaidErrors() {
 	#result=`printf $exampleGoodRaid | sed -n -e "s/\(md[0-9]*\) : [^ ]* [^ ]* \(.*\)/\1 \2/; t zim" -e "b ; :zim {p}"`
 	# this version adds stuff from the second line
 	parsedOutput=`printf "$toCheckOutput" | sed -n -e "/^md/ {N; s/\(md[0-9]*\) : [^ ]* [^ ]* \(.*\)\n\( \|\t\)*[0-9]* blocks [^\[]* \(.*\)$/\1 \2 \4/; t zim}" -e "b ; : zim {p}"`
-	parsedOutput="`printf \"$parsedOutput\" | sed -n -e '1 {h; b}; $ {H; x; s/\n/,/g; p; b}; H'`"
+	parsedOutput="`printf \"$parsedOutput\" | sed -n -e '$ {H; x; s/\n/,/g; p; b}; H; 1 {h; b};'`"
+
+	if [ "$parsedOutput" = "" ] && [ "`printf "$toCheckOutput" | sed -n -e '/^md[0-9]*\( \|\t\)*:\( \|\t\)*/ p'`" != "" ]; then
+		echo "Fatal Error, there are raids available but we could not parse it correctly."
+		return
+	fi
+
+	#echo $parsedOutput
+	#return
 
 	xs="$parsedOutput"
 	result=""
