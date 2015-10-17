@@ -145,8 +145,8 @@ if [ ! -d $eventDir ]; then
 	echo "the events Directory '$eventDir\` does not exist, please input a valid directory in the configuration file."
 	exit 1
 else
-	if [ ! -w $eventDir ] || [ ! -r $eventDir ] || [ ! -x $eventDir ]; then
-		echo "the events Directory '$eventDir\` is not writable, readable or executable, please fix the permissions of the directory."
+	if [ ! -r $eventDir ] || [ ! -x $eventDir ]; then
+		echo "the events Directory '$eventDir\` is not readable or executable, please fix the permissions of the directory."
 		exit 1
 	fi
 fi
