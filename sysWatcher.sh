@@ -123,7 +123,7 @@ if [ "$mainConfig" = "" ]; then
 		if [ -e "/etc/$defaultConfigName" ]; then
 			mainConfig="/etc/$defaultConfigName"
 		else
-			if [ -e "/usr/local/etc/$defaultConfigName"]; then
+			if [ -e "/usr/local/etc/$defaultConfigName" ]; then
 				mainConfig="/usr/local/etc/$defaultConfigName"
 			else
 				echo "Error: no configuration found."
