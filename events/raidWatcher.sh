@@ -4,9 +4,6 @@ debugging=0
 
 # raid watcher, this scripts reads the configuration file raidWatcher.conf.
 
-. /usr/share/sysWatcher/utils.sh
-
-
 exampleRaid1="\
 Personalities : [raid1]\n\
 md2 : active raid1 sda1[1](F) sdb1[2]\n\
