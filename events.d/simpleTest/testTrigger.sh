@@ -1,9 +1,6 @@
 #! /bin/sh
 
-if [ -e _testFile ]; then
-	echo 'Event Triggered!'
-	touch ~/IT_WORKED
-	rm _testFile
-else
-	touch _testFile
-fi
+varDir=$HOME/tmp/sysWatcher/events/var
+
+if [ ! -e "$varDir/simpleTest.log" ]; then touch $varDir/simpleTest.log; fi
+echo "`date`: Triggered" >> $varDir/simpleTest.log
