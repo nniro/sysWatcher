@@ -1,15 +1,11 @@
 #! /bin/sh
 
 eventName() {
-	echo "testEvent"
+	echo "simpleTest"
 }
 
 eventIsTrue() {
-	if [ -e _testFile ]; then
-		echo 1
-	else
-		echo 0
-	fi
+	echo 1
 }
 
 triggerEventType() {
@@ -17,9 +13,10 @@ triggerEventType() {
 }
 
 triggerEventScript() {
-	echo ~/scripts/testTrigger.sh
+	echo $eventDir/simpleTest/testTrigger.sh
 }
 
 triggerTimeout() {
-	echo "2015-06-23 17:20:00"
+	# every 5 minutes
+	echo `addMinutes "\`now\`" 5`
 }
