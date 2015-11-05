@@ -6,7 +6,7 @@
 
 # include all scripts. The last argument is the function name
 typeset -a allScripts
-i=0
+i=1
 temp=""
 oldTemp=""
 while [ 1 = 1 ]; do
@@ -29,8 +29,8 @@ done
 #echo "scripts : ${allScripts[@]} - ${#allScripts[@]}"
 #echo "function : $function"
 
-i=0
-while [ $((i < ${#allScripts[@]})) = 1 ]; do
+i=1
+while [ $((i <= ${#allScripts[@]})) = 1 ]; do
 	if [ ! -e ${allScripts[$i]} ]; then
 		#echo "error script '${allScripts[$i]}\` don't exist"
 		exit 1;
@@ -43,10 +43,10 @@ done
 
 functionName="`echo \"$function\" | sed -e 's/\([^ ]*\) .*/\1/'`"
 
-echo $functionName
+#echo $functionName
 # we first check if the actual function exists
 if [ "`declare -f | grep \"$functionName\"`" != "" ]; then
-	echo `$function`
+	eval $function
 	exit 0
 else
 	echo "could not find the function"
