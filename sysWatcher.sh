@@ -291,6 +291,10 @@ handleScripts() {
 	eventName="`runSFunc \"$script\" \"eventName\"`"
 	if [ -e $varDir/_${eventName}-timeout ]; then
 		timeout=`cat $varDir/_${eventName}-timeout`
+
+		if [ "$timeout" = "" ]; then
+			timeout="0"
+		fi
 	else
 		timeout="0"
 	fi
