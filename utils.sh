@@ -306,6 +306,8 @@ addSeconds() {
 		local toAddMinutes=$((($toAdd + $newSeconds) / 60))
 		local newSeconds=$((($toAdd + $newSeconds) - ($toAddMinutes * 60)))
 		local newMinutes=$(($newMinutes + $toAddMinutes))
+	else
+		local newSeconds=$(($newSeconds + $toAdd))
 	fi
 
 	if [ $(($newMinutes >= 60)) = 1 ]; then
