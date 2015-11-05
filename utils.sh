@@ -292,11 +292,11 @@ addSeconds() {
 	fi
 
 	local tuple2=`sep ':' "$time"`
-	local hours=`fst $tuple2 | sed -e 's/0*\([0-9]*\)/\1/'`
+	local hours=`fst $tuple2 | sed -e 's/0*\([0-9]*\)/\1/; s/^$/0/'`
 	local tuple2=`sep ':' "\`snd $tuple2\`"`
-	local minutes=`fst $tuple2 | sed -e 's/0*\([0-9]*\)/\1/'`
+	local minutes=`fst $tuple2 | sed -e 's/0*\([0-9]*\)/\1/; s/^$/0/'`
 	local tuple2=`sep ':' "\`snd $tuple2\`"`
-	local seconds=`fst $tuple2 | sed -e 's/0*\([0-9]*\)/\1/'`
+	local seconds=`fst $tuple2 | sed -e 's/0*\([0-9]*\)/\1/; s/^$/0/'`
 
 	local newHours=$hours
 	local newMinutes=$minutes
@@ -364,8 +364,8 @@ cmpDigits() {
 		tuple1=`sep "$sepSymbol" \`snd $tuple1\``
 		tuple2=`sep "$sepSymbol" \`snd $tuple2\``
 
-		val1=`fst $tuple1 | sed -e 's/0*\([0-9]*\)/\1/'`
-		val2=`fst $tuple2 | sed -e 's/0*\([0-9]*\)/\1/'`
+		val1=`fst $tuple1 | sed -e 's/0*\([0-9]*\)/\1/; s/^$/0/'`
+		val2=`fst $tuple2 | sed -e 's/0*\([0-9]*\)/\1/; s/^$/0/'`
 
 		if [ $val1 = $val2 ]; then
 			continue
