@@ -152,8 +152,18 @@ else
 fi
 
 if [ ! -d $varDir ]; then
-	echo "the variable Directory '$varDir\` does not exist, please input a valid directory in the configuration file."
-	exit 1
+
+	mkdir $varDir
+
+	if [ ! -d $varDir ]; then
+		echo "the variable Directory '$varDir\` does not exist and we don't have the permission to create it. Please input a valid directory in the configuration file."
+		exit 1
+	else
+		if [ ! -w $varDir ] || [ ! -r $varDir ]; then
+			echo "We created the variable Directory '$varDir\` but it is not writable or readable, please fix the permissions of the directory."
+			exit 1
+		fi
+	fi
 else
 	if [ ! -w $varDir ] || [ ! -r $varDir ]; then
 		echo "the variable Directory '$varDir\` is not writable or readable, please fix the permissions of the directory."
