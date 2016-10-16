@@ -1,0 +1,5 @@
+The sysWatcher project is a fully scriptable, generic event system. It
+uses custom triggers to invoke a script or to send an email with
+predetermined content. Event triggering is entirely handled by the
+plugin scripts, hence the term "generic".
+
