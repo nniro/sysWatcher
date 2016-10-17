@@ -6,7 +6,7 @@ The sysWatcher project is a fully scriptable, generic event system. It uses cust
 
 The installation process is necessary because sysWatcher depends on in-house scripts, which provide functions useful to plugins and the main script alike. Functions for date and time malipulation are provided, among others.
 
-In your terminal, clone the sysWatcher repository using `git clone git://xroutine.net/sysWatcher.git`.
+In your terminal, clone the sysWatcher repository using `git clone git://xroutine.net/sysWatcher.git`. You can also browse the repository here : [http://git.xroutine.net/sysWatcher.git](http://git.xroutine.net/sysWatcher.git)
 
 Install the configuration and plugin files by typing `make install`. This creates and populates the directory **/usr/share/sysWatcher**.
 
